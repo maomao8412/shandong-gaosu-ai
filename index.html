@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>山东高速集团人工智能（AI）规划技术文档</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --bg-elevated: #1e293b;
+    --bg-card: #1e293b;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --accent-dark: #1d4ed8;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --border: #334155;
+    --border-light: #475569;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+    padding: 60px 40px 50px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--accent-light);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero-subtitle {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin-bottom: 30px;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 900px;
+  }
+  .stat-card {
+    background: rgba(30,41,59,0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-light);
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  .section {
+    margin-bottom: 50px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  /* Architecture overview */
+  .arch-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .arch-layer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    align-items: start;
+    position: relative;
+  }
+  .arch-layer::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    bottom: -12px;
+    width: 2px;
+    height: 12px;
+    background: var(--border-light);
+  }
+  .arch-layer:last-child::before { display: none; }
+  .layer-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--accent-light);
+  }
+  .layer-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .layer-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .layer-tag {
+    padding: 5px 12px;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .layer-tag.green {
+    background: rgba(16,185,129,0.1);
+    border-color: rgba(16,185,129,0.25);
+    color: #6ee7b7;
+  }
+  .layer-tag.amber {
+    background: rgba(245,158,11,0.1);
+    border-color: rgba(245,158,11,0.25);
+    color: #fcd34d;
+  }
+  .layer-tag.purple {
+    background: rgba(139,92,246,0.1);
+    border-color: rgba(139,92,246,0.25);
+    color: #c4b5fd;
+  }
+  .layer-tag.pink {
+    background: rgba(236,72,153,0.1);
+    border-color: rgba(236,72,153,0.25);
+    color: #f9a8d4;
+  }
+
+  /* Project cards */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .project-card:hover {
+    border-color: var(--accent);
+  }
+  .project-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .project-name {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .project-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .tag-base { background: rgba(139,92,246,0.15); color: #c4b5fd; }
+  .tag-agent { background: rgba(59,130,246,0.15); color: #93c5fd; }
+  .tag-cv { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+  .tag-data { background: rgba(245,158,11,0.15); color: #fcd34d; }
+  .tag-iot { background: rgba(236,72,153,0.15); color: #f9a8d4; }
+
+  .project-body {
+    padding: 16px 24px;
+  }
+  .project-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .project-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .feature-list {
+    list-style: none;
+  }
+  .feature-list li {
+    padding: 6px 0;
+    font-size: 13.5px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: var(--text);
+    border-bottom: 1px solid rgba(51,65,85,0.5);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -26px;
+    top: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .timeline-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-light);
+    margin-bottom: 6px;
+  }
+  .timeline-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+  }
+  .timeline-content h4 {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .timeline-content p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .timeline-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .timeline-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(59,130,246,0.1);
+    color: var(--accent-light);
+  }
+
+  /* Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .data-table th {
+    background: rgba(59,130,246,0.1);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-light);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .data-table td {
+    padding: 11px 16px;
+    font-size: 13.5px;
+    border-bottom: 1px solid rgba(51,65,85,0.5);
+    color: var(--text);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td {
+    background: rgba(59,130,246,0.04);
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+  }
+
+  /* Summary section */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .summary-card h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: var(--accent-light);
+  }
+  .summary-card ul {
+    list-style: none;
+  }
+  .summary-card li {
+    font-size: 13.5px;
+    padding: 5px 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .summary-card li::before {
+    content: '→';
+    color: var(--accent);
+    font-weight: bold;
+  }
+
+  @media (max-width: 900px) {
+    .hero { padding: 40px 20px 30px; }
+    .hero h1 { font-size: 26px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 24px 16px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .arch-layer { grid-template-columns: 1fr; gap: 12px; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    body { background: white; color: black; }
+    .hero { background: white; border-bottom: 2px solid #333; }
+    .hero-badge, .stat-card, .project-card, .arch-layer, .timeline-content, .summary-card, .data-table {
+      background: white !important;
+      color: black !important;
+      border-color: #ccc !important;
+    }
+    .project-tag, .layer-tag, .timeline-tag {
+      background: #eee !important;
+      color: #333 !important;
+      border-color: #ccc !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">🚀 山东高速集团 · 数字化转型核心引擎</div>
+  <h1>人工智能（AI）规划技术文档</h1>
+  <p class="hero-subtitle">
+    基于山东高速集团十余个数字化项目实施计划梳理，系统呈现AI技术在高速运营、养护、服务、能源、绿通、安全等领域的全栈布局与实施路径。
+  </p>
+  <div style="margin: 16px 0 8px;">
+    <a href="tech-design.html" style="display:inline-block;padding:10px 20px;background:linear-gradient(135deg,#10b981,#059669);color:white;text-decoration:none;border-radius:8px;font-weight:500;font-size:14px;">📘 查看技术开发详细设计文档 →</a>
+    <span style="color:var(--text-dim);font-size:12px;margin-left:12px;">面向研发团队的LLD级深度技术方案</span>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-card">
+      <div class="stat-value">9+</div>
+      <div class="stat-label">AI相关项目</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">5层</div>
+      <div class="stat-label">技术架构体系</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">200+</div>
+      <div class="stat-label">AI功能模块</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">2026</div>
+      <div class="stat-label">全面落地元年</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 一、总体架构 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🏗️</div>
+      <h2 class="section-title">一、AI总体技术架构</h2>
+      <span class="section-desc">五层架构，从基础算力到场景应用</span>
+    </div>
+    <p style="color:var(--text-muted);margin-bottom:10px;">
+      山东高速集团AI布局采用"基础底座—模型层—能力层—应用层—门户层"的分层架构，以"运营垂域大模型+RAG知识库"为双核心驱动，向上支撑调度、养护、绿通、能源、服务区、出行服务等全业务场景智能体应用。
+    </p>
+
+    <div class="arch-layers">
+      <div class="arch-layer">
+        <div>
+          <div class="layer-name">🔹 门户/入口层</div>
+          <div class="layer-sub">统一入口、统一体验</div>
+        </div>
+        <div class="layer-items">
+          <span class="layer-tag">一站式运营AI门户</span>
+          <span class="layer-tag">智能体市场/列表</span>
+          <span class="layer-tag">个性化看板</span>
+          <span class="layer-tag">语音播报智能体</span>
+          <span class="layer-tag">"山高行"AI服务平台</span>
+        </div>
+      </div>
+
+      <div class="arch-layer">
+        <div>
+          <div class="layer-name">🔸 场景智能体层</div>
+          <div class="layer-sub">面向业务的AI应用</div>
+        </div>
+        <div class="layer-items">
+          <span class="layer-tag green">高速公路运营调度智能体</span>
+          <span class="layer-tag green">异常指标AI告警</span>
+          <span class="layer-tag green">绿通智慧查验AI识别</span>
+          <span class="layer-tag amber">能源AI分析与优化</span>
+          <span class="layer-tag amber">服务区AI管控</span>
+          <span class="layer-tag purple">路面养护AI管控</span>
+          <span class="layer-tag purple">日常养护AI计量</span>
+          <span class="layer-tag pink">智慧锥桶（车路协同）</span>
+          <span class="layer-tag pink">机电设施监测AI</span>
+        </div>
+      </div>
+
+      <div class="arch-layer">
+        <div>
+          <div class="layer-name">🔹 AI能力层</div>
+          <div class="layer-sub">可复用的原子AI能力</div>
+        </div>
+        <div class="layer-items">
+          <span class="layer-tag">大模型问答与对话</span>
+          <span class="layer-tag">RAG检索增强生成</span>
+          <span class="layer-tag">多轮对话管理</span>
+          <span class="layer-tag">知识图谱构建</span>
+          <span class="layer-tag">智能数据分析</span>
+          <span class="layer-tag">可视化报告生成</span>
+          <span class="layer-tag">语音识别ASR</span>
+          <span class="layer-tag">语音意图理解</span>
+          <span class="layer-tag">图像/视频智能识别</span>
+          <span class="layer-tag">事件调度决策</span>
+          <span class="layer-tag">车流量预测</span>
+        </div>
+      </div>
+
+      <div class="arch-layer">
+        <div>
+          <div class="layer-name">🔸 模型与数据层</div>
+          <div class="layer-sub">垂域大模型 + 知识库</div>
+        </div>
+        <div class="layer-items">
+          <span class="layer-tag purple">运营垂域大模型微调（LoRA）</span>
+          <span class="layer-tag purple">专属模型发布部署</span>
+          <span class="layer-tag">运营知识库（行业+个人）</span>
+          <span class="layer-tag">向量数据库</span>
+          <span class="layer-tag">Embedding模型</span>
+          <span class="layer-tag">Rerank重排序</span>
+          <span class="layer-tag">多模态数据标注平台</span>
+          <span class="layer-tag">Prompt工程优化</span>
+        </div>
+      </div>
+
+      <div class="arch-layer">
+        <div>
+          <div class="layer-name">🔹 基础设施层</div>
+          <div class="layer-sub">算力与数据底座</div>
+        </div>
+        <div class="layer-items">
+          <span class="layer-tag amber">GPU算力资源</span>
+          <span class="layer-tag amber">多源数据融合采集</span>
+          <span class="layer-tag amber">数据清洗与预处理</span>
+          <span class="layer-tag amber">标注规范制定</span>
+          <span class="layer-tag amber">大模型推理服务接口</span>
+          <span class="layer-tag amber">GIS地理信息底座</span>
+          <span class="layer-tag amber">物联网感知设备</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二、AI核心项目 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🧠</div>
+      <h2 class="section-title">二、AI核心项目详解</h2>
+      <span class="section-desc">按技术属性分类梳理</span>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- 1. 运营垂域人工智能底座 -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">1. 运营垂域人工智能底座</div>
+            <span class="project-tag tag-base">基础底座</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);">负责人：刘树港</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            整个集团AI体系的核心基础设施项目，构建运营领域专属大模型、知识库和通用智能体能力，向上支撑所有业务场景的AI应用。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026.04 - 2026.12</div>
+            <div class="meta-item">📍 业务基座升级项目</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>垂域大模型微调</strong>：基于通用大模型，用高速运营数据做LoRA微调，产出专属运营大模型，2026年5月启动，12月完成部署上线</li>
+            <li><strong>运营知识库</strong>：行业知识库+个人知识库双层体系，含向量数据库选型、知识入库索引、RAG检索流程、引用溯源</li>
+            <li><strong>通用词库与知识图谱</strong>：知识图谱CMRC工程优化、实体关系自动标注、多轮对话管理</li>
+            <li><strong>Prompt工程优化</strong>：针对知识库问答场景的Prompt模板与策略优化</li>
+            <li><strong>数据标注体系</strong>：多模态数据标注规范制定、工具搭建/选型、质量审核全流程</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 2. 高速公路运营调度智能体 -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">2. 高速公路运营调度智能体</div>
+            <span class="project-tag tag-agent">智能体</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);">负责人：耿仁康</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            面向高速运营调度核心场景的决策级智能体，整合路网运行监控、视频智能调取、动态指标分析、事件调度决策等核心能力。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026.06 - 2026.12</div>
+            <div class="meta-item">📍 一张网运营平台</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>统一对话/展示窗口</strong>：一个入口完成所有调度操作，无需切换多系统</li>
+            <li><strong>统一任务调度</strong>：智能编排养护、收费、路政、运营等多部门协同任务</li>
+            <li><strong>视频监控智能调取</strong>：事件触发自动调取对应路段监控画面，人工干预</li>
+            <li><strong>动态指标分析</strong>：实时车流量、路况、气象等多维度指标智能分析</li>
+            <li><strong>运营知识检索</strong>：自然语言查询运营制度、应急预案、历史案例等</li>
+            <li><strong>事件调度决策</strong>：基于大模型的突发事件辅助决策，2026年底完成</li>
+            <li><strong>事件复盘分析</strong>：处置完成后自动生成复盘报告，沉淀经验</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 3. 异常指标AI告警 -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">3. 异常指标AI告警系统</div>
+            <span class="project-tag tag-agent">智能体</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);">负责人：孙宁波</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            基于AI的全量运营指标异常检测与智能告警，替代传统阈值告警方式，实现突变检测、趋势漂移、节假日特殊识别等高级能力。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026.06 - 2026.10</div>
+            <div class="meta-item">📍 业务基座升级项目</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>指标基线建模</strong>：分析各指标周期性、趋势性和正常波动特征，建立基线模型</li>
+            <li><strong>异常检测算法</strong>：突变检测、环比同比异常、趋势漂移检测多算法融合</li>
+            <li><strong>节假日异常识别</strong>：识别节假日特殊偏离，避免误告警</li>
+            <li><strong>告警分级与推送</strong>：分级告警规则，企业微信等多通道推送</li>
+            <li><strong>根因溯源分析</strong>：异常发生后自动追溯关联指标，定位根因范围</li>
+            <li><strong>指标总览仪表盘</strong>：多维度告警信息可视化展示</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4. 绿通智慧查验AI -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">4. 绿通智慧查验AI系统</div>
+            <span class="project-tag tag-cv">计算机视觉</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);">负责人：姜利民</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            利用AI图像识别和数据分析技术，对绿色通道车辆进行智能查验，提升查验效率，降低偷逃通行费风险。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026.06 - 2026.11</div>
+            <div class="meta-item">📍 优化绿通智慧查验系统</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>货物主产区可靠性分析</strong>：基于货物产地、运输路径等数据研判绿通申报真实性</li>
+            <li><strong>货物运输期间可靠性分析</strong>：在途时长、路径合理性等多维风险评估模型</li>
+            <li><strong>绿通异常通行行为分析</strong>：异常路线、异常时间、异常频次的行为画像</li>
+            <li><strong>人车关联深度分析</strong>：司机、车辆、货物多维度关联研判</li>
+            <li><strong>作弊嫌疑车辆智能识别</strong>：基于AI算法自动识别冒牌绿通车、混装车辆</li>
+            <li><strong>违规记录留存溯源</strong>：全流程查验记录留存，支持长期追溯</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 5. 能源数字化AI分析 -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">5. 能源数字化AI管理平台</div>
+            <span class="project-tag tag-data">数据分析</span>
+          </div>
+          <div style="meta-item">负责人：赵树岳</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            面向高速沿线光伏、充电桩、配电系统的智能能源管理平台，用AI做能耗分析、异常诊断、用能优化和碳减排测算。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026.06 - 2026.11</div>
+            <div class="meta-item">📍 能源数字化管理平台</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>实时监控与告警</strong>：基于AI的用能异常检测和预警，支持分级告警配置</li>
+            <li><strong>能耗统计分析</strong>：分时段精细化用能分析、站点消纳明细分析</li>
+            <li><strong>用能成本管理</strong>：分时峰谷电价策略、容需量优化建议</li>
+            <li><strong>能耗诊断与优化</strong>：用电供需不平衡分析、配置异常诊断、节能建议</li>
+            <li><strong>电能质量监测</strong>：AI动态监测电能质量，异常预警</li>
+            <li><strong>碳与环境影响分析</strong>：光伏发电碳减排量自动测算与综合分析</li>
+            <li><strong>全景驾驶舱</strong>：多层级能源看板，全域综合驾驶舱</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 6. 智慧服务区AI管控 -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">6. 智慧服务区AI管控</div>
+            <span class="project-tag tag-iot">物联智能</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);">负责人：孟利强</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            基于AI的智慧服务区综合管理，覆盖车辆识别、车流分析、重点车辆研判、能耗管理等多个场景。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026.07 - 2026.12</div>
+            <div class="meta-item">📍 智慧服务区管理平台</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>车辆画像与标签</strong>：挖掘车辆特征，构建服务区通行画像</li>
+            <li><strong>重点车辆智能研判</strong>：基于研判模型自动筛查重点车辆</li>
+            <li><strong>车流量智能统计</strong>：智能区分方向、车型，自动统计分析</li>
+            <li><strong>热力分析与预警</strong>：停车场车辆分布态势，拥堵自动预警</li>
+            <li><strong>稽核研判</strong>：异常车辆结合证据链的智能稽核</li>
+            <li><strong>加油/充电排队监测</strong>：AI视觉监测排队状况</li>
+            <li><strong>电能智能管理</strong>：用电数据自动采集与智能分析</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 7. "山高行"AI服务平台 -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">7. "山高行"AI服务系统</div>
+            <span class="project-tag tag-agent">智能体</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);">对外公众服务</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            面向公众出行的AI服务系统，是集团AI能力对外输出的C端入口，提供智能导航、出行问答、语音交互等服务。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026年全周期</div>
+            <div class="meta-item">📍 "山高行"服务平台</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>AI对话式出行服务</strong>：自然语言查询路况、服务区、收费站等信息</li>
+            <li><strong>智能路径规划</strong>：AI推荐最优路线，含充电桩、服务区、休息点规划</li>
+            <li><strong>语音交互</strong>：语音识别、语音播报，解放双手</li>
+            <li><strong>个性化推荐</strong>：基于用户画像的出行服务推荐</li>
+            <li><strong>智能客服</strong>：AI处理常见咨询，转人工兜底</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 8. 通用智能体能力 -->
+      <div class="project-card">
+        <div class="project-header">
+          <div>
+            <div class="project-name">8. 通用智能体应用能力</div>
+            <span class="project-tag tag-base">基础能力</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);">AI门户内置</div>
+        </div>
+        <div class="project-body">
+          <p class="project-desc">
+            运营AI门户内置的通用智能体能力套件，可快速配置适用于不同业务场景的数据智能体。
+          </p>
+          <div class="project-meta">
+            <div class="meta-item">⏱ 2026.08 - 2026.10</div>
+            <div class="meta-item">📍 一站式运营AI门户</div>
+          </div>
+          <ul class="feature-list">
+            <li><strong>数据查询智能体</strong>：自然语言查询各类运营数据，自动生成SQL/查询语句</li>
+            <li><strong>智能体工作流编排</strong>：拖拽式编排查询→分析→呈现工作流</li>
+            <li><strong>多维数据分析</strong>：基于大模型的数据洞察与推理分析</li>
+            <li><strong>可视化报告自动生成</strong>：自动生成包含图表的分析报告</li>
+            <li><strong>语音填报智能体</strong>：语音采集→字段匹配→表单自动填写→校验→提交</li>
+            <li><strong>分析结果结构化输出</strong>：JSON/表格等多种格式输出</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 三、实施路线图 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">📅</div>
+      <h2 class="section-title">三、AI实施路线图</h2>
+      <span class="section-desc">2026年关键里程碑</span>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2026年Q1 - Q2 · 基础建设期</div>
+        <div class="timeline-content">
+          <h4>AI基础设施与数据底座</h4>
+          <p>启动运营垂域大模型微调工作；制定多模态数据标注规范；搭建标注工具平台；知识库平台技术架构设计与向量数据库选型；指标体系规范初稿编写与基线模型初建；各业务系统AI需求梳理与方案设计。</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag">大模型微调启动</span>
+            <span class="timeline-tag">数据标注体系</span>
+            <span class="timeline-tag">知识库搭建</span>
+            <span class="timeline-tag">指标基线建模</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2026年Q3 · 能力成型期</div>
+        <div class="timeline-content">
+          <h4>核心AI能力集中落地</h4>
+          <p>RAG检索增强生成全链路打通（行业知识库接入→向量检索→引用溯源）；异常指标AI告警核心能力上线（基线模型、异常检测、告警分级）；绿通智慧查验AI模型开发与验证；运营调度智能体基础框架上线（对话窗口、视频调取、知识检索）；能源AI监控告警上线；服务区AI车辆识别与车流分析落地。</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag">RAG上线</span>
+            <span class="timeline-tag">AI告警首版</span>
+            <span class="timeline-tag">绿通AI查验</span>
+            <span class="timeline-tag">调度智能体v1</span>
+            <span class="timeline-tag">能源AI上线</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2026年Q4 · 全面深化期</div>
+        <div class="timeline-content">
+          <h4>AI全场景深化与智能体生态</h4>
+          <p>运营垂域大模型完成微调与部署；运营调度智能体事件决策与复盘能力上线；一站式运营AI门户全面开放（智能体列表、个性化看板、语音播报）；通用数据智能体、语音填报智能体等能力上线；知识库全面调优（分块策略、Embedding、Rerank）；日常养护AI计量、路面养护AI管控等场景落地；"山高行"AI服务系统公众端上线。</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag">垂域大模型上线</span>
+            <span class="timeline-tag">AI门户发布</span>
+            <span class="timeline-tag">智能体生态</span>
+            <span class="timeline-tag">养护AI落地</span>
+            <span class="timeline-tag">公众AI服务</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2027年及以后 · 持续迭代</div>
+        <div class="timeline-content">
+          <h4>AI能力深化与业务拓展</h4>
+          <p>模型持续迭代优化；更多业务场景智能体孵化；车路协同（智慧锥桶）等前沿技术规模化应用；跨业务域智能体协同；指标体系规范升级为企业标准；AI辅助决策从辅助走向主决策。</p>
+          <div class="timeline-tags">
+            <span class="timeline-tag">模型迭代</span>
+            <span class="timeline-tag">场景深化</span>
+            <span class="timeline-tag">企业标准</span>
+            <span class="timeline-tag">车路协同</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四、关键技术栈 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">⚙️</div>
+      <h2 class="section-title">四、关键技术栈</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>技术领域</th>
+            <th>具体技术</th>
+            <th>应用场景</th>
+            <th>所属项目</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>大模型微调</strong></td>
+            <td>LoRA低秩适配、全量微调、多模态微调</td>
+            <td>运营领域知识注入、行业术语理解、业务流程内化</td>
+            <td>运营垂域人工智能底座</td>
+          </tr>
+          <tr>
+            <td><strong>RAG检索增强</strong></td>
+            <td>向量数据库、Embedding模型、Chunk分块、Rerank重排</td>
+            <td>运营制度问答、应急预案检索、历史案例查询</td>
+            <td>运营知识库 + 调度智能体</td>
+          </tr>
+          <tr>
+            <td><strong>异常检测算法</strong></td>
+            <td>突变检测、趋势漂移检测、环比同比异常、节假日特殊识别</td>
+            <td>全量运营指标异常告警、根因溯源</td>
+            <td>异常指标AI告警系统</td>
+          </tr>
+          <tr>
+            <td><strong>计算机视觉</strong></td>
+            <td>目标检测、图像分类、OCR、视频结构化</td>
+            <td>绿通车辆查验、服务区车辆识别、排队监测、养护病害识别</td>
+            <td>绿通查验 + 服务区 + 养护系统</td>
+          </tr>
+          <tr>
+            <td><strong>数据分析与挖掘</strong></td>
+            <td>多维度分析、趋势预测、热力分析、风险评估模型</td>
+            <td>能耗分析优化、车流预测、人车关联分析、通行画像</td>
+            <td>能源平台 + 绿通 + 服务区</td>
+          </tr>
+          <tr>
+            <td><strong>语音AI</strong></td>
+            <td>ASR语音识别、语音意图理解、语音合成TTS</td>
+            <td>语音填报、语音播报、语音交互导航</td>
+            <td>AI门户 + 山高行 + 播报智能体</td>
+          </tr>
+          <tr>
+            <td><strong>知识图谱</strong></td>
+            <td>实体关系抽取、图谱构建、多轮对话管理</td>
+            <td>行业知识结构化、智能问答增强、关联推理</td>
+            <td>运营垂域AI底座</td>
+          </tr>
+          <tr>
+            <td><strong>智能体框架</strong></td>
+            <td>工作流编排、多源数据连接、自动调度、多模态输出</td>
+            <td>调度智能体、数据智能体、通用智能体配置</td>
+            <td>调度智能体 + AI门户</td>
+          </tr>
+          <tr>
+            <td><strong>车路协同</strong></td>
+            <td>移动基站、精准定位、实时预警、V2X</td>
+            <td>智慧锥桶施工预警、主动交通管控</td>
+            <td>设施服务状态管控</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 五、AI团队与负责人 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">👥</div>
+      <h2 class="section-title">五、核心团队与分工</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>负责人</th>
+            <th>负责领域</th>
+            <th>主要模块</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>刘树港</strong></td>
+            <td>AI基础底座</td>
+            <td>运营垂域大模型微调、知识库平台建设、知识库调优、数据标注体系</td>
+          </tr>
+          <tr>
+            <td><strong>耿仁康</strong></td>
+            <td>运营调度智能体</td>
+            <td>统一对话窗口、任务调度、视频调取、动态指标分析、事件决策、知识检索</td>
+          </tr>
+          <tr>
+            <td><strong>孙宁波</strong></td>
+            <td>指标与数据AI</td>
+            <td>异常指标AI告警、指标计算引擎、标准化接口开发、运营指标统计分析</td>
+          </tr>
+          <tr>
+            <td><strong>姜利民</strong></td>
+            <td>绿通AI查验</td>
+            <td>作弊绿通车识别、货物可靠性分析、异常通行行为分析、人车关联分析</td>
+          </tr>
+          <tr>
+            <td><strong>赵树岳</strong></td>
+            <td>能源AI</td>
+            <td>用能异常诊断、能耗优化、碳减排分析、全景驾驶舱</td>
+          </tr>
+          <tr>
+            <td><strong>孟利强</strong></td>
+            <td>服务区AI管控</td>
+            <td>车辆画像、重点车辆研判、车流热力分析、排队监测、能耗管理</td>
+          </tr>
+          <tr>
+            <td><strong>李树材</strong></td>
+            <td>养护AI</td>
+            <td>日常养护计量AI、应急事件计量支付、路面养护质量管控</td>
+          </tr>
+          <tr>
+            <td><strong>魏加加</strong></td>
+            <td>车路协同AI</td>
+            <td>智慧锥桶、主动交通管控、施工预警</td>
+          </tr>
+          <tr>
+            <td><strong>颜如意</strong></td>
+            <td>信息服务AI</td>
+            <td>运营报告生成、信息服务统计分析、日常巡查AI</td>
+          </tr>
+          <tr>
+            <td><strong>孙超 / 马玉楼</strong></td>
+            <td>一张网运营平台</td>
+            <td>出行信息汇聚与一张图、数据接入、信息发布</td>
+          </tr>
+          <tr>
+            <td><strong>李猛华 / 王殿超</strong></td>
+            <td>业务基座 + 高精一张图</td>
+            <td>深化设计、三维地图、地图引擎、融合开放平台</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 六、特点与判断 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">💡</div>
+      <h2 class="section-title">六、规划特点与观察</h2>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h3>✅ 做得好的地方</h3>
+        <ul>
+          <li>架构完整：从底座到应用五层架构清晰，不是零散上AI</li>
+          <li>垂域深耕：明确做运营领域大模型微调，而非套通用模型</li>
+          <li>场景务实：聚焦收费、养护、能源、绿通等高频高价值场景</li>
+          <li>双轮驱动：大模型 + 知识库（RAG）双路线，知识沉淀与模型能力并行</li>
+          <li>门户统一：AI门户收拢所有智能体入口，避免系统孤岛</li>
+          <li>梯队合理：基础能力先行（Q2），场景应用跟上（Q3-Q4），节奏稳</li>
+        </ul>
+      </div>
+
+      <div class="summary-card">
+        <h3>⚠️ 需要关注的点</h3>
+        <ul>
+          <li>大模型微调数据来源未明确，运营领域高质量标注数据是关键瓶颈</li>
+          <li>标注团队规模和质量控制机制未见规划，200+任务的标注工作量很大</li>
+          <li>GPU算力资源如何保障？自建还是云服务？成本不小</li>
+          <li>多个项目都在做AI，存在重复建设可能（比如知识库、RAG、大模型对接）</li>
+          <li>调度智能体的"事件决策"能力预期管理很重要，避免决策失误风险</li>
+          <li>AI伦理和安全：大模型幻觉、数据安全、隐私合规需要配套机制</li>
+        </ul>
+      </div>
+
+      <div class="summary-card">
+        <h3>🔍 整体判断</h3>
+        <ul>
+          <li>这是一个<strong>体系化、有规划</strong>的AI布局，不是跟风蹭热点</li>
+          <li>核心策略是"大模型+知识库"双轮驱动，适合国企/行业场景</li>
+          <li>AI已从单点工具升级为<strong>基础能力平台</strong>，向上孵化多场景智能体</li>
+          <li>2026年是AI能力集中落地年，2027年才是真正的效果验证年</li>
+          <li>与行业内其他高速集团相比，这个规划的<strong>完整度和深度处于第一梯队</strong></li>
+          <li>最大变量在于：<strong>数据质量、模型效果、落地推广力度</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="text-align:center;padding:30px;color:var(--text-dim);font-size:12px;border-top:1px solid var(--border);">
+  山东高速集团人工智能（AI）规划技术文档 · 基于集团十余个数字化项目实施计划梳理 · 2026年10月
+</div>
+
+</body>
+</html>
